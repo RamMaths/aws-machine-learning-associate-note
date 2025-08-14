@@ -38,3 +38,30 @@
     - XML and JSON files
     - Email headers (which have a mix of structured fields like date, subject, etc and unstructured data in the body )
     - Log files with varied formats
+
+### Properties of Data
+
+#### Volume
+
+- Definition: Refers to the amount or size of data that organizations are dealing with at any given time.
+- Characteristics:
+    - May range from gigabytes to petabytes or even More.
+    - Challenges in storing, processing, and analyzing high volumes of data.
+- Examples:
+    - A popular social media platform processing terabytes of data daily from user posts images, and videos.
+    - Retailers collecting years' worth of transaction data, amounting to several petabytes.
+
+#### Velocity
+
+- Definition: Refers to the speed at which new data is generated, collected, and processed
+- Characteristics:
+    - High velocity requires real-time or near-real-time processing capabilities.
+    - Rapid ingestion and processing can be critical for certain applications.
+- Examples:
+    - Sensor data from IoT devices Streaming readings every milisecond.
+    - High-frequency trading systems where milliseconds can make a diffrence in decision-making.
+
+#### Variety
+
+- A business analyzing data from relational databases (structured), emails (unstructured), and JSON logs (semi-structured).
+- Healthcare systems collecting data from electronic medical records, wearable, health devices, and patient feedback forms.
