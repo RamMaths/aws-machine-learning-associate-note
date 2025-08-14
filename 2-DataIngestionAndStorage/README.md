@@ -66,9 +66,9 @@
 - A business analyzing data from relational databases (structured), emails (unstructured), and JSON logs (semi-structured).
 - Healthcare systems collecting data from electronic medical records, wearable, health devices, and patient feedback forms.
 
-### Data Warehouses, Lakes and Lakehouses
+## Data Warehouses, Lakes and Lakehouses
 
-#### Data Warehouse
+### Data Warehouse
 
 - Definition: A centralizied repository optimizied for analysis where data from different sources is stored in a structured format.
 - Characteristics:
@@ -83,7 +83,7 @@
 
 ![Datawarehouse](../assets/datawarehouse.png)
 
-#### Data Lake
+### Data Lake
 
 - Definition: A storage repository that holds vast amounts of raw data in its native format, including structured, semi-structured, and unstructured data.
 - Characteristics:
@@ -96,7 +96,7 @@
     - Azure Data Lake Storage
     - Hadoop Distributed File System (HDFS)
 
-#### Comparing the two
+### Comparing the two
 
 - Schema:
     - Data Warehouse: Schema-on-write (predefined shcema before writing data)
@@ -116,7 +116,7 @@
     - Data Warehouse: Typically more expensive because of optimizations for compex queries
     - Data Lake: Cost-effective storage solutions, but costs casrise when processing large amounts of data
 
-#### Choosing a Warehouse vs a Lake
+### Choosing a Warehouse vs a Lake
 
 - Use a Data Warehouse when
     - You have structured data sources and require fast and complex queries.
@@ -128,7 +128,7 @@
     - Future needs for data are uncertain, and you want flexibility in storage and processing
     - Advanced analytics, machine learning, or data discovery are key goals.
 
-#### Data Lakehouse
+### Data Lakehouse
 
 - Definition: A hybrid data architecture that combines the best features of data lakes and data warehouses, aiming to provide the performance, reliability, and capabilities of a data warehouse while maintaining the flexibility, scale, and low-cost storage of data lakes.
     - Characteristics:
@@ -142,3 +142,57 @@
         - **Delta Lake**: An open-source storage layer that brings ACID transactions to Apache Spark and big data workloads.
         - **Databricks Lakehouse Platform**: A unified platform that combines the capabilities of data lakes and data warehouses.
         - **Azure Synapse analytics**: Microsoft's analytics service that brings together big data and data warehousing.
+
+## Data Mesh
+
+- Coined in 2019: it's more about governance and organization
+- Individual teams own "data products" within a given domain
+- These data products serve various "use cases" around the organization
+- "Domain-based data management"
+- Federated governance with central standards
+- Self-service tooling & infrastructure
+- Data lakes, warehouses, etc. may be part of it
+    - But a "data mesh" is more about the "data management paradigm" and not the specific technologies or architectures
+
+![Datamesh](../assets/datamesh.png)
+
+## ETL & ELT Pipelines and Orchestration
+
+### ETL Pipelines
+
+- **Definition**: It's a process used to move data from source systems into adata warehouse.
+
+### ETL Pipelines:Extract
+
+- Retrieve raw data from source systems, which can be databases, CRMs, flat files, APIs, or other data repositories
+- Ensure data integrity during the extraction phase.
+- Can be done in real-time or in batches, depending on requirements
+
+### ETL Pipelines: Transform
+
+- Convert the extract data into a format suitable for the target data warehouses
+- Can involve various operations such as:
+    - Data cleansing
+    - Data enrichment
+    - Format changes
+    - Aggregations or computations
+    - Encoding or decoding data
+    - Handling missing values
+
+### ETL Pipelines: Load
+
+- Move the transformed data into the target data warehouse or another data repository.
+- Can be done in batches (all at once) or in a streaming manner (as data becomes available)
+- Ensure that data maintains its integrity during the loading phase
+
+### Managin ETL Pipelines
+
+- This process must be automated in some reliable way
+- AWS Glue
+- Orchestration services
+    - EventBridge
+    - Amazon Managed Workflows for Apache Airflow [Amazon MWAA]
+    - AWS Step Functions
+    - Lambda
+    - Glue Workflows
+- We'll get into specific architectures later
