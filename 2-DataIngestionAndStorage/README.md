@@ -196,3 +196,143 @@
     - Lambda
     - Glue Workflows
 - We'll get into specific architectures later
+
+### Amazon S3 Moving between Storage Classes
+
+- You can transition objects between storage Classes
+- For infrequently accessed object, move them to Standard IA
+- For archive objects that you don't need fast access to, move them to Glacier or Glacier Deep Archive
+- Moving objects can be automated using Lifecycle Rules
+
+#### Lifecycle Rules
+
+- Transition Actions - configure objects to transition to another storage Classes
+    - Move objects to Standard IA class 60 days after creation
+    - Move to Glacier for archiving after 6 months
+- Expiration actions - configure objects to expire (delete) after some time
+    - Access log files can be set to delte after 365 days
+    - Can be used to delte old versions of files (if versioning is enabled)
+    - Can be used to delte incomplete Multi-Part uploads
+- Rules can be created for a certain prefix (exapmle: s3://mybucket/mp3/*)
+- Rules can be created for certain object Tags (Example: Department: Finance)
+
+#### S3 Analytics - Storage Class analysis
+
+- Help you decide when to transition to objects to the right storage class
+- Recommendations for Standard and Standard IA
+    - Does NOT work for One-Zone IA or Glacier
+- Report is updated daily
+- 24 to 48 hours to start seeing data analysis
+
+### S3 Event Notifications
+
+- S3:Object Created S3:ObjectRemoved,
+- S3:ObjectRestore, S3:Replciation
+- Object name filtering possible (*.jpg)
+- Use case: generate thumbnails of images uploaded to S3
+- Multiple destinations: step functions, kinesis streams, Firehose
+- EventBridge Capabilities: Archive, Replay Events, Reliable delivery
+
+![eventnotifications](../assets/eventnotifications.png)
+
+### S3 Baseline Performance
+
+- Amazon S3 automatically scales to high request rates, latency 100-200 ms
+- Your applciation can achieve at least 3,500 PUT/COPY/POST/DELTE or 5,500 GET/HEAD requests per second per prefix in a bucket
+- There are no limits to the number of prefixes in a bucket
+    - The prefix is anything between the name of the bucket and the name of the file
+    - Example (object path => prefix)
+        - bucket/folder1/sub1/file => /folder1/sub1/
+        - bucket/folder1/sub2/file => /folder1/sub2/
+
+### S3 Performance
+
+- Multi-Part upload
+    - recommended for files > 100MB
+    - must use for files > 5GB
+    - Can help parallelize uploads (seed up transfers)
+
+![Multipart](../assets/multipart.png)
+
+- S3 Transfer Acceleration
+    - Increase transfer speed by trasnferring file to an AWS edge location which will forward the data to the S3 bucket in the target region
+    - Compatible with multi-part upload
+
+![TransferAcceleration](../assets/transferacceleration.png)
+
+#### Byte-Range Fetches
+
+- Parallelize GETs by requesting specific byte ranges
+- Better resilience in case of failures
+- Can be used to speed up downloads
+- Can be used to retrieve only partial data
+
+![ByteRange](../assets/byterange.png)
+
+### S3 - Object Encryption
+
+- You can en crypt objects in s3 buckets using one of 4 methods
+- Server-Side Encryption (SSE)
+    - SSE-S3
+        - Encryption using keys handled, managed, and owned by AWS
+        - Object is encrypted Server-Side
+        - Encryption type is AES-256
+        - Must set header "x-amz-server-side-encryption":"AWS256"
+        - Enabled by default for new buckets & new objects
+        ![SSE](../assets/encryptionsse.png)
+    - SSE-KMS
+        - Encryption using keys handled and managed by AWS KMS (Key Management Service)
+        - KMS advantages: user control + audit key usage using CloudTrail
+        - Object is encrypted server side
+        - Must set header "x-amz-server-side-encryption":"aws:kms"
+        - Limitations
+            - If you use SSE KMS you may be impacted by the KMS limits
+            - When you upload, it calls the GenerateDataKey KMS API
+            - When you download, it calls the Decrypt KMS API
+            - Count towards the KMS quota per second (5500, 10000, 30000 req/s based on region)
+            - You can request a quota increase using the Service Quotas Console
+        ![SSE-KMS](../assets/encryptionsse-kms.png)
+    - SSE-C
+        - Server-Side Encryption using keys fully managed by the customer outide of AWS
+        - Amazon S3 does NOT store the encryption key you provide
+        - HTTPS Must be used
+        - Encryption key must be provided in HTTP headers, for every HTTP request made
+        ![SSE-C](../assets/encryptionsse-c.png)
+- Client-Side Encryption
+    - Use client libraries such as Amazon S3 Client-Side Encryption Library
+    - Clients must encryption data them selves before sending to Amazon S3
+    - CLients must decrypt data themselves when retrieving from Amazon s3
+    - Customer fully manages the keys  and encrypttion cyle
+    ![clientside](../assets/encryptionClienSide.png)
+- Encryption in transit (SSL/TLS)
+    - Amazon S3 exposes two endpoints:
+        - HTTP Endpoint
+        - HTTPS Endpoint
+    - Optionallly we can "force encryption" using a bucket policy and refuse any API call to PUT an S3 object without encryption headers (SSE-KMS or SSE-C)
+    ![forceEncryption](../assets/forceencryption.png)
+- It's important to understand which ones are for which situation for the exam
+
+### S3 Access Points
+
+![AccesPoints](../assets/accespoints.png)
+
+- Each accespoint has:
+    - its own DNS name (Internet Origin or VPC Origin)
+    - an access point policy
+
+#### Access Points - VPC Origin
+
+- We can define the access point to be accesible only from within the VPC
+- You must create a VPC Endpoint to access the Access point (Gateway or Interface Endpoint)
+- The VPC Endpoint Policy must allow access to the target bucket and Access Point
+
+![VPCEndpoint](../assets/vpcendpoint.png)
+
+### S3 Object Lambda
+
+- Use AWS Lambda Function to change the object before it is retrieved by the caller application
+- Only one S3 bucket is needed, on top of which we create S3 Access Point and S3 Object Lambda Access Points
+
+![ObjectLambda](../assets/objectlambda.png)
+
+
